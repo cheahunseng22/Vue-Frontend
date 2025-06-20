@@ -59,6 +59,13 @@
             Register
           </RouterLink>
         </p>
+
+          <p class="mt-6 flex justify-end  opacity-50  text-center text-gray-600">
+
+          <RouterLink to="/admin/dashboard" class="mx-2 underline text-green-600 font-semibold hover:underline">
+            Admin
+          </RouterLink>
+        </p>
       </form>
 
       <Toast ref="toastRef">Purchase confirmed successfully!</Toast>

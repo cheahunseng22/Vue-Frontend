@@ -292,9 +292,16 @@ onMounted(fetchProducts);
 // Fetch current user info
 const fetchUser = async () => {
   try {
-    const res = await axios.get('/api/auth/listuser');
-    // Adjust this depending on your API response structure
-    username.value = res.data.user?.[0]?.name || '';
+    const token = localStorage.getItem('token'); // or wherever you store the token
+
+    const res = await axios.get('/api/auth/listuser', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    username.value = res.data.user?.name || '';
+
     if (!username.value) {
       router.push('/login');
     }
@@ -303,6 +310,9 @@ const fetchUser = async () => {
     router.push('/login');
   }
 };
+
+
+
 
 // Fetch product list
 
