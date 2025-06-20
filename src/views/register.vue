@@ -103,7 +103,7 @@ const confirmpassword = ref('')
 const router = useRouter()
 
 // Configure Axios
-axios.defaults.baseURL = 'http://127.0.0.1:8000'
+axios.defaults.baseURL = 'https://elarastore.duckdns.org'
 axios.defaults.withCredentials = true
 
 const handleregister = async () => {

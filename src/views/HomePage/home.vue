@@ -184,7 +184,6 @@
 </template>
 
 <script setup>
-import { endpoints } from '../../apiEndpoints';
 import QrcodeVue from 'qrcode.vue'; // npm install qrcode.vue
 
 
@@ -395,7 +394,7 @@ const checkout = async () => {
 
   try {
     const response = await axios.post(
-      'https://elarastore.duckdns.org/api/pay',
+      '/api/pay',
       { products }, // now includes product_id and quantity
       {
         headers: {
