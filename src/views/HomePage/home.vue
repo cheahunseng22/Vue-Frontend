@@ -93,7 +93,7 @@
         <div v-for="item in cart" :key="item.id" class="flex justify-between items-center border-b py-1">
           <div>
             <img class="w-full h-full object-contain" v-if="item.image"
-              :src="`http://localhost:8000/storage/${item.image}`" alt="Product" />
+              :src="`https://elarastore.duckdns.org/storage/${item.image}`" alt="Product" />
             <p class="font-semibold text-sm">{{ item.name }}</p>
             <p class="text-sm font-medium">${{ item.price * item.quantity }}</p>
 
@@ -154,7 +154,7 @@
         <!-- Image Container with fixed height -->
         <figure class="w-full h-48 overflow-hidden">
           <img class="w-full h-full object-contain" v-if="product.image"
-            :src="`http://localhost:8000/storage/${product.image}`" alt="Product" />
+            :src="`https://elarastore.duckdns.org/storage/${product.image}`" alt="Product" />
         </figure>
 
         <!-- Card Body fills remaining space -->
@@ -217,7 +217,7 @@ const loading = ref(true);
 
 const token = localStorage.getItem('token');
 
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = 'https://elarastore.duckdns.org';
 axios.defaults.withCredentials = true;
 
 if (token) {
@@ -395,7 +395,7 @@ const checkout = async () => {
 
   try {
     const response = await axios.post(
-      'http://127.0.0.1:8000/api/pay',
+      'https://elarastore.duckdns.org/api/pay',
       { products }, // now includes product_id and quantity
       {
         headers: {

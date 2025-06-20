@@ -84,7 +84,7 @@ const successMessage = ref('');
 
 
 const token = localStorage.getItem('token');
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = 'https://elarastore.duckdns.org';
 axios.defaults.withCredentials = true;
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;

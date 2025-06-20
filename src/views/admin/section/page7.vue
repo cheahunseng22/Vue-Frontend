@@ -38,7 +38,7 @@ onMounted(async () => {
 
   try {
     const token = localStorage.getItem('token') // add token if needed
-    const response = await axios.get('http://127.0.0.1:8000/api/pay/all', {
+    const response = await axios.get('https://elarastore.duckdns.org/api/pay/all', {
       headers: token ? { Authorization: `Bearer ${token}` } : {}
     })
 

@@ -39,7 +39,7 @@ onMounted(async () => {
   errorMessage.value = null
 
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/products')
+    const response = await axios.get('https://elarastore.duckdns.org/api/products')
     products.value = response.data
 
     totalPrice.value = products.value.reduce((sum, p) => sum + Number(p.price), 0)

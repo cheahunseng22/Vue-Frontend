@@ -86,7 +86,7 @@ onMounted(async () => {
     }
 
     try {
-        const response = await axios.get('http://127.0.0.1:8000/api/pay/all', {
+        const response = await axios.get('https://elarastore.duckdns.org/api/pay/all', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

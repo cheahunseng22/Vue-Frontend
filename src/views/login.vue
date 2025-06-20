@@ -2,8 +2,6 @@
   <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
     <div class="max-w-5xl w-full bg-white rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row">
 
-
-
       <!-- Image Section -->
       <div class="w-full md:w-1/2 h-78 md:h-auto">
         <img
@@ -62,7 +60,8 @@
           </RouterLink>
         </p>
       </form>
-       <Toast ref="toastRef">Purchase confirmed successfully!</Toast>
+
+      <Toast ref="toastRef">Purchase confirmed successfully!</Toast>
     </div>
   </div>
 </template>
@@ -72,17 +71,14 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
-
-
-
 // Initialize refs
 const email = ref('')
 const password = ref('')
 const router = useRouter()
 
 // Configure Axios defaults
-axios.defaults.baseURL = 'http://localhost:8000'
-axios.defaults.withCredentials = true
+axios.defaults.baseURL = 'https://elarastore.duckdns.org' // <-- Your remote backend URL
+axios.defaults.withCredentials = true  // important if your backend uses cookies/sanctum auth
 
 const handleLogin = async () => {
   try {
@@ -93,16 +89,19 @@ const handleLogin = async () => {
 
     const token = data.access_token
 
-    // ✅ Clear admin session to avoid conflict
+    // Clear admin session if any
     sessionStorage.removeItem('admin_just_logged_in')
 
-    // ✅ Save token and user flag
+    // Save token and user flag locally
     localStorage.setItem('token', token)
     localStorage.setItem('user_store', 'true')
+
+    // Set token in Axios headers for future requests
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
-    alert('login successfull');
-    // ✅ Redirect to /home (user dashboard)
+    alert('Login successful')
+
+    // Redirect to /home
     await router.push('/home')
   } catch (error) {
     console.error('Login error:', error.response?.data || error.message)
@@ -116,7 +115,6 @@ const handleLogin = async () => {
     }
   }
 }
-
 </script>
 
 <style scoped>

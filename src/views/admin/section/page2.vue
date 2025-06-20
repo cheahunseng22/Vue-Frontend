@@ -84,7 +84,7 @@
     <section class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       <div v-for="product in products" :key="product.id" class="card bg-base-100 shadow-sm">
         <figure>
-          <img v-if="product.image" :src="`http://localhost:8000/storage/${product.image}`" alt="Product" />
+          <img v-if="product.image" :src="`https://elarastore.duckdns.org/storage/${product.image}`" alt="Product" />
         </figure>
         <div class="card-body">
           <h2 class="card-title">{{ product.name }}</h2>

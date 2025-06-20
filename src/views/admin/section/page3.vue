@@ -70,7 +70,7 @@
         <td class="px-4 py-2 sm:px-6 sm:py-4">
           <img
             v-if="product.image"
-            :src="`http://localhost:8000/storage/${product.image}`"
+            :src="`https://elarastore.duckdns.org/storage/${product.image}`"
             alt="Product"
             class="w-16 h-16 object-cover rounded"
           />
@@ -104,7 +104,7 @@ const maxProducts = 100; // define max limit for the chart
 const fetchProducts = async () => {
     isLoading.value = true;
   try {
-    const res = await axios.get('/api/products');
+    const res = await axios.get('https://elarastore.duckdns.org/api/products');
     products.value = res.data;
   } catch (e) {
     console.error('Failed to load products:', e.response?.data || e.message);
