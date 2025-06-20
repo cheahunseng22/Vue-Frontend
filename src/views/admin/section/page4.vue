@@ -33,6 +33,11 @@
           </tr>
         </tbody>
       </table>
+
+        <!-- Global Loading Spinner -->
+<div v-if="isLoading" class="text-center mb-4 my-5">
+  <span class="loader inline-block w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+</div>
     </div>
   </div>
 </template>
@@ -51,6 +56,8 @@ import {
   CategoryScale,
   LinearScale,
 } from 'chart.js';
+
+const isLoading = ref(false);
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
@@ -84,6 +91,7 @@ const chartOptions = {
 const users = ref([]);
 
 const fetchUsers = async () => {
+    isLoading.value = true;
   try {
     const res = await axios.get('/api/auth/listuser');
     users.value = res.data.user || [];
@@ -92,6 +100,8 @@ const fetchUsers = async () => {
     chartData.value.datasets[0].data[0] = users.value.length;
   } catch (e) {
     console.error('User fetch failed:', e.response?.data || e.message);
+  }finally{
+      isLoading.value = false;
   }
 };
 

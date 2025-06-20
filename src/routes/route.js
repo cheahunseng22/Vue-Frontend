@@ -6,6 +6,8 @@ import Dashboard from '../views/admin/Dashboard.vue'
 import Admin from '../views/admin/Admin.vue'
 import page from '../views/LandingPages/page.vue'
 import Page1 from '../views/admin/section/page1.vue'
+import Payment from '../views/pay/Payments.vue'
+
 
 const routes = [
   {path:'/', component: page},
@@ -39,6 +41,21 @@ const routes = [
 },
 {
   path:'/admin-page1',component:Page1
+},
+{
+  path: '/payments',
+  component: Payment,
+  beforeEnter: (to, from, next) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Set default token header for axios if needed
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      next(); // allow access
+    } else {
+      alert('You must be logged in to access payments');
+      next('/login'); // redirect to login
+    }
+  }
 }
 
 

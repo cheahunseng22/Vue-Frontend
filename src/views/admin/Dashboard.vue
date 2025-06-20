@@ -47,7 +47,27 @@
             :class="activeTab === 'page4' ? 'bg-blue-700' : 'hover:bg-blue-700'"
             class="block p-2 rounded cursor-pointer w-full text-left transition">
             Analysis user
-          </button>          
+          </button>
+
+          <button @click="activeTab = 'page5'; sidebarOpen = false"
+            :class="activeTab === 'page5' ? 'bg-blue-700' : 'hover:bg-blue-700'"
+            class="block p-2 rounded cursor-pointer w-full text-left transition">
+            Sell Product Management
+          </button>
+
+          <button @click="activeTab = 'page6'; sidebarOpen = false"
+            :class="activeTab === 'page6' ? 'bg-blue-700' : 'hover:bg-blue-700'"
+            class="block p-2 rounded cursor-pointer w-full text-left transition">
+            ចំណាយ
+          </button>
+
+
+          <button @click="activeTab = 'page7'; sidebarOpen = false"
+            :class="activeTab === 'page7' ? 'bg-blue-700' : 'hover:bg-blue-700'"
+            class="block p-2 rounded cursor-pointer w-full text-left transition">
+           ចំណូល​​​ 
+          </button>
+
         </nav>
 
 
@@ -83,6 +103,9 @@ import page1 from './section/page1.vue'
 import page2 from './section/page2.vue'
 import page3 from './section/page3.vue'
 import page4 from './section/page4.vue'
+import Page5 from './section/page5.vue';
+import Page6 from './section/page6.vue';
+import Page7 from './section/page7.vue';
 
 
 // Make sure initial active tab matches one of the keys below
@@ -91,8 +114,14 @@ const activeTab = ref('page1')
 // Map activeTab value to component
 const currentComponent = computed(() => {
   switch (activeTab.value) {
+    case 'page7':
+      return Page7
+    case 'page6':
+      return Page6
+    case 'page5':
+      return Page5
     case 'page4':
-    return page4
+      return page4
     case 'page3':
       return page3
     case 'page2':

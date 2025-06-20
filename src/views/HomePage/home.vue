@@ -14,13 +14,13 @@
         </nav>
         <!-- right secttion  -->
 
-        <div class="flex justify-end items-center space-x-4 cursor-pointer" >
+        <div class="flex justify-end items-center space-x-4 cursor-pointer">
           <div class="cart relative">
             <i class="fa-brands fa-opencart" @click="toggleCart"></i>
             <span class="text-red-500 text-[12px] font-bold -top-2
              right-0 absolute">{{ cartCount }}</span>
           </div>
-          
+
           <span class="text-sm font-medium text-gray-800">
             <template v-if="loading">Loading...</template>
             <template v-else-if="username">{{ username }}</template>
@@ -31,6 +31,48 @@
           </button>
         </div>
       </div>
+
+
+      <!-- 🔄 Show Loading -->
+      <div v-if="isPaying"
+        class="fixed top-0 left-0 w-full h-full bg-blue-900/50 bg-opacity-40 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+          <p class="text-lg font-semibold mb-2">Wait for payment QR Code...</p>
+          <div class="loader border-t-4 border-blue-500 border-solid rounded-full w-10 h-10 animate-spin mx-auto"></div>
+        </div>
+      </div>
+
+
+
+      <!-- 🧾 QR Code Display -->
+      <div v-if="paymentResult" class="relative grid justify-center py-10 space-y-4">
+        <div
+          class="btn-x absolute top-5 right-1 text-2xl bg-base-300 w-10 text-center p-[3px] cursor-pointer text-white h-10 rounded-full"
+          @click="paymentResult = null">
+          X
+        </div>
+
+        <!-- <h2>Message: {{ paymentResult.status }}</h2>  -->
+
+
+        <h3 class="text-center">
+          <span class="font-bold text-red-600 text-2xl">BAKONG PAYMENTS</span>
+        </h3>
+
+        <div class="qr relative">
+          <qrcode-vue :value="paymentResult.qr_string" :size="250" />
+          <span
+            class="absolute top-25 left-25 bg-black rounded-full w-12 h-12 border-3 text-center py-[1px]  text-white text-4xl font-mono">$</span>
+          <h3 class="text-center my-2">
+            <span class="font-semibold text-black-600">{{ paymentResult.name }}</span>
+          </h3>
+
+          <h3 class="text-center">
+            Total Pay: <span class="font-semibold text-red-500">{{ paymentResult.amount }} $</span>
+          </h3>
+        </div>
+      </div>
+
 
 
 
@@ -44,7 +86,8 @@
         </div>
         <div v-if="cart.length === 0">Cart is empty
         </div>
-        <button v-else @click="checkout" class="btn text-green-500 absolute bottom-0 left-0  w-full ">Check Out</button>
+        <button v-else @click="checkout(cart[0].id)" class="btn text-green-500 absolute bottom-0 left-0  w-full ">Check
+          Out</button>
 
 
         <div v-for="item in cart" :key="item.id" class="flex justify-between items-center border-b py-1">
@@ -121,8 +164,12 @@
             <h2 class="card-title">{{ product.name }}</h2>
             <p>{{ product.description }}</p>
           </div>
+           
           <div class="card-actions justify-between items-center mt-4">
             <p class="font-bold">${{ product.price }}</p>
+            <p class="font-bold text-green-600">{{ product.stock }}</p>
+           
+            
             <button @click="addToCart(product)" class="btn bg-green-500 text-white">Add To Cart</button>
           </div>
         </div>
@@ -137,6 +184,10 @@
 </template>
 
 <script setup>
+import { endpoints } from '../../apiEndpoints';
+import QrcodeVue from 'qrcode.vue'; // npm install qrcode.vue
+
+
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -151,6 +202,9 @@ const showErrorToast = (msg) => {
     showToast.value = false;
   }, 3000); // Toast disappears after 3 seconds
 };
+
+const isPaying = ref(false);
+
 
 
 const showCart = ref(false)
@@ -274,21 +328,98 @@ onMounted(async () => {
 });
 
 
-//check out
-const checkout = () => {
+
+const paymentResult = ref(null);
+
+// const checkout = async () => {
+//   if (cart.value.length === 0) {
+//     showErrorToast("Your cart is empty!");
+//     return;
+//   }
+
+//   const token = localStorage.getItem('token');
+//   if (!token) {
+//     alert("You must be logged in to checkout.");
+//     return;
+//   }
+
+//   const productIds = cart.value.map(item => item.id);
+//   console.log("Sending product IDs:", productIds);
+
+//   try {
+//     const response = await axios.post(
+//       'http://127.0.0.1:8000/api/pay',
+//       { product_ids: productIds },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`
+//         }
+//       }
+//     );
+
+//     paymentResult.value = response.data;
+//     console.log("Payment QR Data:", response.data);
+//   } catch (error) {
+//     console.error("Payment Error:", error.response?.data || error.message);
+//   }
+// };
+
+
+
+
+
+// Success toast function, similar to error toast
+
+
+const checkout = async () => {
+
+  showCart.value = !showCart.value
   if (cart.value.length === 0) {
     showErrorToast("Your cart is empty!");
     return;
   }
 
-  // Here you can integrate real payment API later
-  showSuccessToast(" process to payment.");
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert("You must be logged in to checkout.");
+    return;
+  }
 
-  // Clear cart after checkout
-  cart.value = [];
+  const products = cart.value.map(item => ({
+    product_id: item.id,
+    quantity: item.quantity
+  }));
+
+  isPaying.value = true; // start showing loading
+  paymentResult.value = null; // reset previous result if any
+
+  try {
+    const response = await axios.post(
+      'http://127.0.0.1:8000/api/pay',
+      { products }, // now includes product_id and quantity
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+
+    paymentResult.value = response.data;
+    console.log("Payment QR Data:", response.data);
+
+    // ✅ only clear the cart after successful response
+    cart.value = [];
+
+  } catch (error) {
+    console.error("Payment Error:", error.response?.data || error.message);
+    showErrorToast("Payment failed.");
+  } finally {
+    isPaying.value = false; // hide loading
+  }
 };
 
-// Success toast function, similar to error toast
+
 const showSuccessToast = (msg) => {
   toastMessage.value = msg;
   showToast.value = true;

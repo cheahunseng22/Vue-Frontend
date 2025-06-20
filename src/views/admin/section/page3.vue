@@ -48,59 +48,68 @@
       </div>
     </section> -->
 
- 
-  <div class="p-4 min-h-screen">
-    <div class="overflow-x-auto bg-white shadow-md rounded-lg">
-      <table class="min-w-full table-auto text-sm text-left text-gray-700">
-        <thead class="bg-gray-900 text-xs uppercase text-gray-500">
-          <tr>
-            <th class="px-6 py-3">Image</th>
-            <th class="px-6 py-3">Name</th>
-            <th class="px-6 py-3">Description</th>
-            <th class="px-6 py-3">Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="product in products"
-            :key="product.id"
-            class="border-b hover:bg-gray-50"
-          >
-            <td class="px-6 py-4">
-              <img
-                v-if="product.image"
-                :src="`http://localhost:8000/storage/${product.image}`"
-                alt="Product"
-                class="w-16 h-16 object-cover rounded"
-              />
-            </td>
-            <td class="px-6 py-4 font-medium">{{ product.name }}</td>
-            <td class="px-6 py-4">{{ product.description }}</td>
-            <td class="px-6 py-4 text-green-600 font-semibold">${{ product.price }}</td>
 
-          </tr>
-        </tbody>
-      </table>
-    </div>
+
+<div class="overflow-x-auto bg-white shadow-md rounded-lg">
+  <table class="min-w-full table-auto text-sm text-left text-gray-700">
+    <thead class="bg-gray-900 text-xs uppercase text-gray-500">
+      <tr>
+        <th class="px-4 py-2 sm:px-6 sm:py-3">Image</th>
+        <th class="px-4 py-2 sm:px-6 sm:py-3">Name</th>
+        <th class="px-4 py-2 sm:px-6 sm:py-3">Description</th>
+        <th class="px-4 py-2 sm:px-6 sm:py-3">Price</th>
+        <th class="px-4 py-2 sm:px-6 sm:py-3">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="product in products"
+        :key="product.id"
+        class="border-b hover:bg-gray-50"
+      >
+        <td class="px-4 py-2 sm:px-6 sm:py-4">
+          <img
+            v-if="product.image"
+            :src="`http://localhost:8000/storage/${product.image}`"
+            alt="Product"
+            class="w-16 h-16 object-cover rounded"
+          />
+        </td>
+        <td class="px-4 py-2 sm:px-6 sm:py-4 font-medium">{{ product.name }}</td>
+        <td class="px-4 py-2 sm:px-6 sm:py-4 truncate max-w-xs">{{ product.description }}</td>
+        <td class="px-4 py-2 sm:px-6 sm:py-4 text-green-600 font-semibold">${{ product.price }}</td>
+        <td class="px-4 py-2 sm:px-6 sm:py-4 text-green-500 font-semibold">{{ product.stock }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
   </div>
 
 
-  </div>
+
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 
+const isLoading = ref(false);
+
 const products = ref([]);
 const maxProducts = 100; // define max limit for the chart
 
 const fetchProducts = async () => {
+    isLoading.value = true;
   try {
     const res = await axios.get('/api/products');
     products.value = res.data;
   } catch (e) {
     console.error('Failed to load products:', e.response?.data || e.message);
+  }finally{
+      isLoading.value = false;
   }
 };
 onMounted(fetchProducts);
